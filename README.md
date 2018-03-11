@@ -31,7 +31,7 @@ filetype:	json
 
 Check the docs and the testPyPoetry script to learn more.
 
-**NOTES:**
-	-Currently not on PyPI (that is the next step!)
-	-Docs generated using pydoc
-	-No Python 2 support
+* **NOTES:**
+	+-Currently not on PyPI (that is the next step!)
+	+-Docs generated using pydoc
+	+-No Python 2 support
