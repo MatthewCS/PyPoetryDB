@@ -2,6 +2,8 @@
 
 [Check out the online database for yourself!](http://poetrydb.org/index.html)
 
+`pip install pyPoetryDB`
+
 pyPoetryDB is a simple module for Python 3.
 This can be used for accessing and storing data from PoetryDB.
 It was designed with ease-of-use in mind, making it both useful and easy to use.
@@ -32,6 +34,5 @@ filetype:	json
 Check the docs and the testPyPoetry script to learn more.
 
 * **NOTES:**
-	+ Currently not on PyPI (that is the next step!)
 	+ Docs generated using pydoc
 	+ No Python 2 support

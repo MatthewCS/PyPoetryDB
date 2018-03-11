@@ -1,0 +1,6 @@
+pyPoetryDB.py
+setup.py
+pyPoetryDB.egg-info/PKG-INFO
+pyPoetryDB.egg-info/SOURCES.txt
+pyPoetryDB.egg-info/dependency_links.txt
+pyPoetryDB.egg-info/top_level.txt
