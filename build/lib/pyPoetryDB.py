@@ -32,14 +32,14 @@ class Poem:
     """
         A simple class for storing poetry data, either in json or txt format.
     """
-    filetype = ""
     author = ""
     title = ""
     lines = []
     rawdata = ""
     linecount = 0
+    filetype = ""
 
-    def __init__(self, author, title, lines, rawdata, line_count=len(lines), file_type="json"):
+    def __init__(self, author, title, lines, rawdata, linecount=len(lines), filetype="json"):
         """
             Create a new Poem object.
 
@@ -48,25 +48,32 @@ class Poem:
                 title:      title of the poem
                 lines:      array containing the poem's lines
                 rawdata:    the data contained by the poem's file on poetrydb
-                line_count: the number of lines in the poem (equal to len(lines) by default)
-                file_type:  the type of file this poem is ("json" (default) or "txt"(/"text"))
+                linecount: the number of lines in the poem (equal to len(lines) by default)
+                filetype:  the type of file this poem is ("json" (default) or "txt"(/"text"))
         """
-        if file_type != "json" and file_type != "txt":
-            if file_type == "text":
-                file_type = "txt"
+        if filetype != "json" and filetype != "txt":
+            if filetype == "text":
+                filetype = "txt"
             else:
-                raise ValueError("file_type ({}) must be either json or txt(/text)".format(file_type))
+                raise ValueError("filetype ({}) must be either json or txt(/text)".format(filetype))
                 pass
 
-        self.filetype = file_type
+        self.filetype = filetype
         self.author = author
         self.title = title
         self.lines = lines
         self.rawdata = rawdata
-        self.linecount = len(lines)
+        self.linecount = linecount
 
     def __str__(self):
         return "author:\t{0}\ntitle:\t{1}\nlines:\n{2}\nlinecount:\t{3}\nfiletype:\t{4}".format(self.author, self.title, self.lines, self.linecount, self.filetype)
+
+    def __lt__(self, other):
+        """
+            Returns if this Poem's linecount is less than the other Poem's.
+            Note: ONLY FOR LINECOUNTS!!!
+        """
+        return int(self.linecount) < int(other.linecount)
 
 class Poems:
     """
@@ -116,11 +123,11 @@ class Poems:
                 sortby:     what to sort the poetry list by. Can be "title" (default), "author", or "linecount"
         """
         if len(self.poemlist) == 0:
-            pass    #poemlist is empty, cannot be sorted
+            return  #poemlist is empty, cannot be sorted
 
         if sortby != "title" and sortby != "author" and sortby != "linecount":
             raise ValueError("sortby ({}) must be either \"title\", \"author\", or \"linecount\"".format(sortby))
-            pass
+            return
 
         if sortby == "title":
             self.poemlist = sorted(self.poemlist, key=lambda p: Poem.title)
@@ -131,7 +138,7 @@ class Poems:
             self.sortedby = sortby
             pass
         else:
-            self.poemlist = sorted(self.poemlist, key=lambda p: Poem.linecount)
+            self.poemlist.sort()
             self.sortedby = sortby
             pass
 
@@ -166,10 +173,10 @@ class Poems:
                     first = mid
                 else:
                     last = mid
-            else:   #linecount
-                if self.poemlist[mid].linecount == int(searchfor):
+            else:   # Last sorted by linecount
+                if int(self.poemlist[mid].linecount) == int(searchfor):
                     return self.poemlist[mid]
-                elif self.poemlist[mid].linecount < int(searchfor):
+                elif int(self.poemlist[mid].linecount) < int(searchfor):
                     first = mid
                 else:
                     last = mid
@@ -202,7 +209,7 @@ class Poems:
                     matches.append(p)
                     found = True
             elif self.sortedby == "linecount":
-                if p.linecount == int(searchfor):
+                if int(p.linecount) == int(searchfor):
                     matches.append(p)
                     found = True
             elif found: #Last matching poem found
@@ -267,15 +274,15 @@ class Poems:
         """
         return len(self.poemlist)
     
-def getPoem(file_type="json", **kwargs):
+def getPoem(filetype="json", **kwargs):
     """
         Parameters:
-            file_type:  type of poetry file type to return. Can be "json" (default) or "txt"/"text".
+            filetype:  type of poetry file type to return. Can be "json" (default) or "txt"/"text".
 
             kwargs:
                 author:     poem author to search for
                 title:      poem title to tearch for
-                line_count: number of lines to search for
+                linecount: number of lines to search for
         Returns:
             A new Poem from the given parameters.
 
@@ -286,13 +293,13 @@ def getPoem(file_type="json", **kwargs):
 
     # initialize the variables
 
-    if file_type != "json" and file_type != "txt" and file_type != "text":
-        raise ValueError("file_type ({}) must be either json or txt(/text)".format(file_type))
-        pass
+    if filetype != "json" and filetype != "txt" and filetype != "text":
+        raise ValueError("filetype ({}) must be either json or txt(/text)".format(filetype))
+        return 
     
     author = ""
     title = ""
-    line_count = None
+    linecount = None
     url_string = "http://poetrydb.org/"
     url_parameters_left = []
     url_parameters_right = []
@@ -304,13 +311,13 @@ def getPoem(file_type="json", **kwargs):
             author = value
         elif key == "title":
             title = value
-        elif key == "line_count":
-            line_count = value
+        elif key == "linecount":
+            linecount = value
         else:
             raise TypeError("{} is not a valid kwarg.".format(key))
 
-    if file_type == "txt":
-        file_type = "text"
+    if filetype == "txt":
+        filetype = "text"   # poetrydb stores text files as *.text files
 
     # fetch the poem from poetrydb
 
@@ -320,38 +327,38 @@ def getPoem(file_type="json", **kwargs):
     if title != "":
         url_parameters_left.append("title")
         url_parameters_right.append(title)
-    if line_count != None:
-        if line_count < 0:
-            raise ValueError("line_count ({}) cannot be less than 0.".format(max_lines))
+    if linecount != None:
+        if int(linecount) <= 0:
+            raise ValueError("linecount ({}) must be greater than 0.".format(linecount))
             pass
         url_parameters_left.append("linecount")
         url_parameters_right.append(str(linecount))
 
     url_string += ",".join(url_parameters_left) + "/"
     url_string += urllib.parse.quote(";".join(url_parameters_right)) + "/"
-    url_string += "all." + file_type
+    url_string += "all." + filetype
 
     try:
         poem = urllib.request.urlopen(url_string).read()
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            return None
+            return None # 404: file not found!
         else:
             raise e
 
     # return time!
 
-    if file_type == "json":
+    if filetype == "json":
         try:
             jsonPoem = json.loads(poem.decode())[0]
         except: #404 not found, usually
             jsonPoem = json.loads(poem.decode())
             return jsonPoem
-        return Poem(jsonPoem["author"], jsonPoem["title"], jsonPoem["lines"], str(jsonPoem), line_count=jsonPoem["linecount"])
+        return Poem(jsonPoem["author"], jsonPoem["title"], jsonPoem["lines"], str(jsonPoem), linecount=jsonPoem["linecount"])
     else:
         lines = poem.decode().split("\n")
         return Poem(lines[lines.index("author")+1], lines[lines.index("title")+1], lines[lines.index("lines")+1:lines.index("linecount")],
-                    lines, line_count=lines[lines.index("linecount")+1], file_type = file_type)
+                    lines, linecount=lines[lines.index("linecount")+1], filetype = filetype)
 
 def getAllTitles():
     """ Returns all titles currently in http://poetrydb.org/title """

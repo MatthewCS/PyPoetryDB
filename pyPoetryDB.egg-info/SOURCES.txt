@@ -1,4 +1,5 @@
 pyPoetryDB.py
+setup.cfg
 setup.py
 pyPoetryDB.egg-info/PKG-INFO
 pyPoetryDB.egg-info/SOURCES.txt

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pyPoetryDB',
-    version='1.0.0',
+    version='1.0.1',
     py_modules=['pyPoetryDB'],
     author='Matthew C. S.',
     author_email='msprague13@outlook.com',

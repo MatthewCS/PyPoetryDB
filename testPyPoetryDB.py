@@ -29,4 +29,10 @@ print("#######################################################################")
 
 poemsList.sort(sortby="linecount")
 print("Sorted by linecount!")
-print("Found {} poems 9 lines long.".format(len(poemsList.searchAll("9"))))
+print("Found {} poems 24 lines long.".format(len(poemsList.searchAll("24"))))
+
+print("#######################################################################")
+fourty_line_poem = pyPoetryDB.getPoem(linecount="40")
+print("Here is a 40-line-long poem:\n{0.title}".format(fourty_line_poem))
+print("\n\t" + "\n\t".join(fourty_line_poem.lines))
+
